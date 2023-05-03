@@ -97,12 +97,7 @@ const Page: FunctionComponent<PageProps> = () => {
                     <div className="h-1.5 w-4 border border-gray-900 rounded-md bg-gray-900"></div>
                 </div>
                 <div className="w-1 border rounded-md bg-gray-700 mr-2"></div>
-                <div className='bg-red-500 border border-gray-400 rounded-full w-10 h-10 flex justify-center items-center hover:border-gray-800 cursor-pointer mr-2'></div>
-                <div className='bg-green-500 border border-gray-400 rounded-full w-10 h-10 flex justify-center items-center hover:border-gray-800 cursor-pointer mr-2'></div>
-                <div className='bg-blue-500 border border-gray-400 rounded-full w-10 h-10 flex justify-center items-center hover:border-gray-800 cursor-pointer mr-2'></div>
-                <ColorPicker  />
-
-                {/* color={color} onChange={(e) => setColor(e.hex)} */}
+                <ColorPicker color={color} onChange={(e) => setColor(e)} />
                 <div className="w-1 border rounded-md bg-gray-700 mr-2"></div>
                 <div className='bg-red-400 text-white border rounded-md h-10 px-3 flex justify-center items-center hover:bg-red-600 cursor-pointer mr-2' onClick={() => socket.emit('clear-canvas')}>
                     <span>Clear Canvas</span>
