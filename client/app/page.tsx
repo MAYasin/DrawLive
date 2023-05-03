@@ -5,6 +5,14 @@ import { drawLine } from '@/utils/drawLine';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { ChromePicker } from 'react-color';
 import { io } from 'socket.io-client'
+import Navbar from './navbar';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faPencil, faMarker, faBrush } from '@fortawesome/free-solid-svg-icons';
+import ColorPicker from './colorpicker';
+
+library.add(faPencil, faMarker, faBrush)
 
 const socket = io('http://localhost:3001')
 
@@ -66,17 +74,51 @@ const Page: FunctionComponent<PageProps> = () => {
     }
 
     return (
-        <div className='w-screen h-screen bg-white flex justify-center items-center'>
-            <div className='flex flex-col gap-10 pr-10'>
-                <ChromePicker color={color} onChange={(e) => setColor(e.hex)} />
-                <button type='button' className='p-2 rounded-md border border-black' onClick={() => socket.emit('clear-canvas')}>Clear canvas</button>
+        <div className='w-screen h-screen background-color flex flex-col'>
+            <Navbar />
+            <div className='tool-bar p-3 m-6 flex justify-center rounded-full'>
+                <div className='bg-white border border-gray-400 rounded-md w-10 h-10 flex justify-center items-center hover:bg-gray-100 hover:border-gray-800 cursor-pointer mr-2'>
+                    <FontAwesomeIcon icon='pencil' />
+                </div>
+                <div className='bg-white border border-gray-400 rounded-md w-10 h-10 flex justify-center items-center hover:bg-gray-100 hover:border-gray-800 cursor-pointer mr-2'>
+                    <FontAwesomeIcon icon='marker' />
+                </div>
+                <div className='bg-white border border-gray-400 rounded-md w-10 h-10 flex justify-center items-center hover:bg-gray-100 hover:border-gray-800 cursor-pointer mr-2'>
+                    <FontAwesomeIcon icon='brush' />
+                </div>
+                <div className="w-1 border rounded-md bg-gray-700 mr-2"></div>
+                <div className='bg-white border border-gray-400 rounded-md w-10 h-10 flex justify-center items-center hover:bg-gray-100 hover:border-gray-800 cursor-pointer mr-2'>
+                    <div className="h-0 w-4 border border-gray-900 rounded-md bg-gray-900"></div>
+                </div>
+                <div className='bg-white border border-gray-400 rounded-md w-10 h-10 flex justify-center items-center hover:bg-gray-100 hover:border-gray-800 cursor-pointer mr-2'>
+                    <div className="h-1 w-4 border border-gray-900 rounded-md bg-gray-900"></div>
+                </div>
+                <div className='bg-white border border-gray-400 rounded-md w-10 h-10 flex justify-center items-center hover:bg-gray-100 hover:border-gray-800 cursor-pointer mr-2'>
+                    <div className="h-1.5 w-4 border border-gray-900 rounded-md bg-gray-900"></div>
+                </div>
+                <div className="w-1 border rounded-md bg-gray-700 mr-2"></div>
+                <div className='bg-red-500 border border-gray-400 rounded-full w-10 h-10 flex justify-center items-center hover:border-gray-800 cursor-pointer mr-2'></div>
+                <div className='bg-green-500 border border-gray-400 rounded-full w-10 h-10 flex justify-center items-center hover:border-gray-800 cursor-pointer mr-2'></div>
+                <div className='bg-blue-500 border border-gray-400 rounded-full w-10 h-10 flex justify-center items-center hover:border-gray-800 cursor-pointer mr-2'></div>
+                <ColorPicker  />
+
+                {/* color={color} onChange={(e) => setColor(e.hex)} */}
+                <div className="w-1 border rounded-md bg-gray-700 mr-2"></div>
+                <div className='bg-red-400 text-white border rounded-md h-10 px-3 flex justify-center items-center hover:bg-red-600 cursor-pointer mr-2' onClick={() => socket.emit('clear-canvas')}>
+                    <span>Clear Canvas</span>
+                </div>
+                <div className='bg-purple-400 text-white border rounded-md h-10 px-3 flex justify-center items-center hover:bg-purple-600 cursor-pointer mr-2'>
+                    <span>Save Image</span>
+                </div>
             </div>
-            <canvas
-            ref={canvasRef} 
-            onMouseDown={onMouseDown}
-            width={750}
-            height={750}
-            className='border border-black rounded-md'/>
+            <div className='flex flex-grow justify-center items-center'>               
+                <canvas
+                ref={canvasRef} 
+                onMouseDown={onMouseDown}
+                width={750}
+                height={750}
+                className='rounded-md bg-white shadow-sm'/>
+            </div>
         </div>
     );
 }
