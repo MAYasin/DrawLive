@@ -1,19 +1,23 @@
 'use client'
 
 import { useDraw } from '@/hooks/useDraw';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState } from 'react';
+import { ChromePicker } from 'react-color';
+
 interface pageProps {
     
 }
  
 const page: FunctionComponent<pageProps> = () => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [color, setColor] = useState<string>('#000')
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const { canvasRef, onMouseDown } = useDraw(drawLine)
+    const { canvasRef, onMouseDown, clearCanvas } = useDraw(drawLine)
 
     function drawLine({prevPoint, currentPoint, ctx}: Draw) {
         const { x: currX, y: currY } = currentPoint
-        const lineColor = '#000'
+        const lineColor = color
         const lineWidth = 5
 
         let startPoint = prevPoint ?? currentPoint
@@ -32,6 +36,10 @@ const page: FunctionComponent<pageProps> = () => {
 
     return (
         <div className='w-screen h-screen bg-white flex justify-center items-center'>
+            <div className='flex flex-col gap-10 pr-10'>
+                <ChromePicker color={color} onChange={(e) => setColor(e.hex)} />
+                <button type='button' className='p-2 rounded-md border border-black' onClick={clearCanvas}>Clear canvas</button>
+            </div>
             <canvas
             ref={canvasRef} 
             onMouseDown={onMouseDown}
