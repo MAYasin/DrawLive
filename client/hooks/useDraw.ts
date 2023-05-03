@@ -58,7 +58,7 @@ export const useDraw = (onDraw: ({ctx, currentPoint, prevPoint}: Draw) => void) 
             window.removeEventListener('mouseup', mouseUpHandler)
         }
         
-    }, [onDraw])
+    }, [mouseDown, onDraw])
 
     return { canvasRef, onMouseDown, clearCanvas}
 }

@@ -14,17 +14,29 @@ const io = new Server(server, {
 type Point = {x: number, y: number}
 
 type Drawline = {
-    prePoint: Point | null,
+    prevPoint: Point | null,
     currentPoint: Point,
     color: string
 }
 
 io.on('connection', (socket) => {
-    socket.on('drawline', ({prePoint, currentPoint, color}: Drawline) => {
-        socket.broadcast.emit('drawline', {prePoint, currentPoint, color})
+
+    socket.on('client-ready', () => {
+        socket.broadcast.emit('get-canvas-state')
     })
+
+    socket.on('canvas-state', (state) => {
+        console.log('received canvas state')
+        socket.broadcast.emit('canvas-state-from-server', state)
+    })
+
+    socket.on('draw-line', ({prevPoint, currentPoint, color}: Drawline) => {
+        socket.broadcast.emit('draw-line', {prevPoint, currentPoint, color})
+    })
+
+    socket.on('clear-canvas', () => io.emit('clear-canvas'))
 })
 
 server.listen(3001, () => {
-    console.log('listening on *:3001')
+    console.log('listening on localhost:3001')
 })
