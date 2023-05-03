@@ -3,6 +3,9 @@
 import { useDraw } from '@/hooks/useDraw';
 import React, { FunctionComponent, useState } from 'react';
 import { ChromePicker } from 'react-color';
+import { io } from 'socket.io-client'
+
+const socket = io('http://localhost:3001')
 
 interface PageProps {}
  
@@ -29,6 +32,10 @@ const Page: FunctionComponent<PageProps> = () => {
         ctx.beginPath()
         ctx.arc(startPoint.x, startPoint.y, 2, 0, Math.PI * 2)
         ctx.fill()
+    }
+
+    function createLine({prevPoint, currentPoint, ctx}: Draw) {
+
     }
 
     return (
