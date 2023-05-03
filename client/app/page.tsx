@@ -4,15 +4,12 @@ import { useDraw } from '@/hooks/useDraw';
 import React, { FunctionComponent, useState } from 'react';
 import { ChromePicker } from 'react-color';
 
-interface pageProps {
-    
-}
+interface PageProps {}
  
-const page: FunctionComponent<pageProps> = () => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
+const Page: FunctionComponent<PageProps> = () => {
+
     const [color, setColor] = useState<string>('#000')
 
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     const { canvasRef, onMouseDown, clearCanvas } = useDraw(drawLine)
 
     function drawLine({prevPoint, currentPoint, ctx}: Draw) {
@@ -50,4 +47,4 @@ const page: FunctionComponent<pageProps> = () => {
     );
 }
  
-export default page;
+export default Page;
