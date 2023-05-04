@@ -66,7 +66,13 @@ const Page: FunctionComponent<PageProps> = () => {
         }
 
     }, [canvasRef, clearCanvas])
-    
+
+    function saveImage() {
+        const link = document.createElement('a')
+        link.href = canvasRef.current?.toDataURL() || ''
+        link.download = 'canvas.png'
+        link.click()
+    }
 
     function createLine({prevPoint, currentPoint, ctx}: Draw) {
         socket.emit('draw-line', ({prevPoint, currentPoint, color}))
@@ -102,7 +108,7 @@ const Page: FunctionComponent<PageProps> = () => {
                 <div className='bg-red-400 text-white border rounded-md h-10 px-3 flex justify-center items-center hover:bg-red-600 cursor-pointer mr-2' onClick={() => socket.emit('clear-canvas')}>
                     <span>Clear Canvas</span>
                 </div>
-                <div className='bg-purple-400 text-white border rounded-md h-10 px-3 flex justify-center items-center hover:bg-purple-600 cursor-pointer mr-2'>
+                <div onClick={saveImage} className='bg-purple-400 text-white border rounded-md h-10 px-3 flex justify-center items-center hover:bg-purple-600 cursor-pointer mr-2'>
                     <span>Save Image</span>
                 </div>
             </div>
