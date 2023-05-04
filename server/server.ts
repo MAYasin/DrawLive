@@ -5,6 +5,10 @@ const server = http.createServer(app)
 
 import { Server } from 'socket.io'
 
+app.get('/', (req: any, res: any) => {
+    res.send('Hey this is my API running 🥳')
+})
+
 const io = new Server(server, {
     cors: {
         origin: '*',
