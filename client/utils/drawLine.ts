@@ -4,32 +4,34 @@ type DrawLineProps = Draw & {
     brushType: string,
 }
 
-function getLineCap (brushType: string): CanvasLineCap {
-    switch(brushType){
-        case "pencil":
-            return 'round'
-        case "marker":
-            return 'square'
-        case "brush":
-            return 'round'
-        default:
-            return 'round'
-    }
-}
-
 export const drawLine = ({prevPoint, currentPoint, ctx, color, strokeWidth, brushType}: DrawLineProps) => {
     const { x: currX, y: currY } = currentPoint
     const lineColor = color
-    const lineWidth = strokeWidth
+    let lineWidth = strokeWidth
+    let lineOpacity = 1
   
     let startPoint = prevPoint ?? currentPoint
     ctx.beginPath()
-    ctx.lineWidth = lineWidth
     ctx.strokeStyle = lineColor
-    ctx.lineCap = getLineCap(brushType)
+    ctx.lineCap = 'round'
+
+    if (brushType === 'pencil') {
+        lineWidth = Math.max(1, lineWidth)
+        lineOpacity = 1
+    } else if (brushType === 'marker') {
+        lineWidth = Math.max(1, lineWidth)
+        lineOpacity = 0.7
+    } else if (brushType === 'brush') {
+        lineWidth = Math.max(1, lineWidth * 2)
+        lineOpacity = 0.5
+    }
+
     ctx.imageSmoothingEnabled = true
     ctx.moveTo(startPoint.x, startPoint.y)
     ctx.lineTo(currX, currY)
+
+    ctx.lineWidth = lineWidth
+    ctx.globalAlpha = lineOpacity
     ctx.stroke()
   
     ctx.fillStyle = lineColor
