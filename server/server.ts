@@ -39,6 +39,6 @@ io.on('connection', (socket) => {
     socket.on('clear-canvas', () => io.emit('clear-canvas'))
 })
 
-server.listen(3001, () => {
-    console.log('listening on localhost:3001')
+server.listen(5000, () => {
+    console.log('listening on localhost:5000')
 })

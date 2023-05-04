@@ -14,7 +14,7 @@ import BrushOptions, { brushOptions } from './brush-options';
 
 
 
-const socket = io('http://localhost:3001')
+const socket = io('http://localhost:5000')
 
 interface PageProps {}
 
