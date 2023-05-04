@@ -1,6 +1,6 @@
 import { SetStateAction, useState } from "react";
 
-export const options = [
+export const strokeOptions = [
   { thickness: "h-0", stroke: 5},
   { thickness: "h-1", stroke: 10},
   { thickness: "h-1.5", stroke: 15},
@@ -8,10 +8,10 @@ export const options = [
 
 interface Props {
     onOptionChange: (stroke: number) => void;
-  }
+}
 
 function StrokeOptions({ onOptionChange }: Props) {
-  const [activeOption, setActiveOption] = useState(options[0].stroke);
+  const [activeOption, setActiveOption] = useState(strokeOptions[0].stroke);
 
   const handleClick = (stroke: number) => {
     setActiveOption(stroke);
@@ -20,7 +20,7 @@ function StrokeOptions({ onOptionChange }: Props) {
 
   return (
     <div className="flex">
-      {options.map((option) => (
+      {strokeOptions.map((option) => (
         <div onClick={() => handleClick(option.stroke)} className={`${
             activeOption === option.stroke
               ? "bg-gray-100 border-gray-800"

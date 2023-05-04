@@ -8,12 +8,11 @@ import { io } from 'socket.io-client'
 import Navbar from './navbar';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faPencil, faMarker, faBrush } from '@fortawesome/free-solid-svg-icons';
 import ColorPicker from './colorpicker';
-import StrokeOptions, { options } from './stoke-options';
+import StrokeOptions, { strokeOptions } from './stoke-options';
+import BrushOptions, { brushOptions } from './brush-options';
 
-library.add(faPencil, faMarker, faBrush)
+
 
 const socket = io('http://localhost:3001')
 
@@ -23,16 +22,22 @@ type DrawLineProps = {
     prevPoint: Point | null
     currentPoint: Point
     color: string,
-    strokeWidth: number
+    strokeWidth: number,
+    brushType: string
 }
  
 const Page: FunctionComponent<PageProps> = () => {
 
     const [color, setColor] = useState<string>('#000')
-    const [strokeWidth, setActiveOption] = useState(options[0].stroke);
+    const [strokeWidth, setActiveStrokeOption] = useState(strokeOptions[0].stroke);
+    const [brushType, setActiveBrushOption] = useState(brushOptions[0]);
 
-    const handleOptionChange = (option: number) => {
-        setActiveOption(option);
+    const handleStrokeOptionChange = (option: number) => {
+        setActiveStrokeOption(option);
+    };
+
+    const handleBrushOptionChange = (option: string) => {
+        setActiveBrushOption(option);
     };
 
     const { canvasRef, onMouseDown, clearCanvas } = useDraw(createLine)
@@ -57,10 +62,10 @@ const Page: FunctionComponent<PageProps> = () => {
             }
         })
 
-        socket.on('draw-line', ({prevPoint, currentPoint, color, strokeWidth}: DrawLineProps) => {
+        socket.on('draw-line', ({prevPoint, currentPoint, color, strokeWidth, brushType}: DrawLineProps) => {
             if(!ctx) return
 
-            drawLine({prevPoint, currentPoint, ctx, color, strokeWidth})
+            drawLine({prevPoint, currentPoint, ctx, color, strokeWidth, brushType})
         })
 
         socket.on('clear-canvas', clearCanvas)
@@ -82,25 +87,17 @@ const Page: FunctionComponent<PageProps> = () => {
     }
 
     function createLine({prevPoint, currentPoint, ctx}: Draw) {
-        socket.emit('draw-line', ({prevPoint, currentPoint, color, strokeWidth}))
-        drawLine({prevPoint, currentPoint, ctx, color, strokeWidth})
+        socket.emit('draw-line', ({prevPoint, currentPoint, color, strokeWidth, brushType}))
+        drawLine({prevPoint, currentPoint, ctx, color, strokeWidth, brushType})
     }
 
     return (
         <div className='w-screen h-screen background-color flex flex-col'>
             <Navbar />
-            <div className='tool-bar p-3 m-6 flex justify-center rounded-full'>
-                <div className='bg-white border border-gray-400 rounded-md w-10 h-10 flex justify-center items-center hover:bg-gray-100 hover:border-gray-800 cursor-pointer mr-2'>
-                    <FontAwesomeIcon icon='pencil' />
-                </div>
-                <div className='bg-white border border-gray-400 rounded-md w-10 h-10 flex justify-center items-center hover:bg-gray-100 hover:border-gray-800 cursor-pointer mr-2'>
-                    <FontAwesomeIcon icon='marker' />
-                </div>
-                <div className='bg-white border border-gray-400 rounded-md w-10 h-10 flex justify-center items-center hover:bg-gray-100 hover:border-gray-800 cursor-pointer mr-2'>
-                    <FontAwesomeIcon icon='brush' />
-                </div>
+            <div className='tool-bar p-3 m-6 flex justify-center rounded-full'>              
+                <BrushOptions onOptionChange={handleBrushOptionChange} />
                 <div className="w-1 border rounded-md bg-gray-700 mr-2"></div>
-                <StrokeOptions onOptionChange={handleOptionChange} />
+                <StrokeOptions onOptionChange={handleStrokeOptionChange} />
                 <div className="w-1 border rounded-md bg-gray-700 mr-2"></div>
                 <ColorPicker color={color} onChange={(e) => setColor(e)} />
                 <div className="w-1 border rounded-md bg-gray-700 mr-2"></div>
