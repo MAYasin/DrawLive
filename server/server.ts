@@ -1,12 +1,18 @@
-const express = require('express')
+import express, { Request, Response } from 'express'
+
 const http = require('http')
 const app = express()
+const port = process.env.PORT || 5000
 const server = http.createServer(app)
 
 import { Server } from 'socket.io'
 
-app.get('/', (req: any, res: any) => {
-    res.send('Hey this is my API running 🥳')
+app.get('/', (_req: Request, res: Response) => {
+    return res.send('Express Typescript on Vercel')
+})
+
+app.get('/ping', (_req: Request, res: Response) => {
+    return res.send('pong 🏓')
 })
 
 const io = new Server(server, {
@@ -43,6 +49,6 @@ io.on('connection', (socket) => {
     socket.on('clear-canvas', () => io.emit('clear-canvas'))
 })
 
-server.listen(5000, () => {
-    console.log('listening on localhost:5000')
+server.listen(port, () => {
+    return console.log(`Server is listening on ${port}`)
 })
