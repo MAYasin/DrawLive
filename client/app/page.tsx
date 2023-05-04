@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faPencil, faMarker, faBrush } from '@fortawesome/free-solid-svg-icons';
 import ColorPicker from './colorpicker';
+import StrokeOptions, { options } from './stoke-options';
 
 library.add(faPencil, faMarker, faBrush)
 
@@ -21,12 +22,18 @@ interface PageProps {}
 type DrawLineProps = {
     prevPoint: Point | null
     currentPoint: Point
-    color: string
+    color: string,
+    strokeWidth: number
 }
  
 const Page: FunctionComponent<PageProps> = () => {
 
     const [color, setColor] = useState<string>('#000')
+    const [strokeWidth, setActiveOption] = useState(options[0].stroke);
+
+    const handleOptionChange = (option: number) => {
+        setActiveOption(option);
+    };
 
     const { canvasRef, onMouseDown, clearCanvas } = useDraw(createLine)
 
@@ -50,10 +57,10 @@ const Page: FunctionComponent<PageProps> = () => {
             }
         })
 
-        socket.on('draw-line', ({prevPoint, currentPoint, color}: DrawLineProps) => {
+        socket.on('draw-line', ({prevPoint, currentPoint, color, strokeWidth}: DrawLineProps) => {
             if(!ctx) return
 
-            drawLine({prevPoint, currentPoint, ctx, color})
+            drawLine({prevPoint, currentPoint, ctx, color, strokeWidth})
         })
 
         socket.on('clear-canvas', clearCanvas)
@@ -75,8 +82,8 @@ const Page: FunctionComponent<PageProps> = () => {
     }
 
     function createLine({prevPoint, currentPoint, ctx}: Draw) {
-        socket.emit('draw-line', ({prevPoint, currentPoint, color}))
-        drawLine({prevPoint, currentPoint, ctx, color})
+        socket.emit('draw-line', ({prevPoint, currentPoint, color, strokeWidth}))
+        drawLine({prevPoint, currentPoint, ctx, color, strokeWidth})
     }
 
     return (
@@ -93,15 +100,7 @@ const Page: FunctionComponent<PageProps> = () => {
                     <FontAwesomeIcon icon='brush' />
                 </div>
                 <div className="w-1 border rounded-md bg-gray-700 mr-2"></div>
-                <div className='bg-white border border-gray-400 rounded-md w-10 h-10 flex justify-center items-center hover:bg-gray-100 hover:border-gray-800 cursor-pointer mr-2'>
-                    <div className="h-0 w-4 border border-gray-900 rounded-md bg-gray-900"></div>
-                </div>
-                <div className='bg-white border border-gray-400 rounded-md w-10 h-10 flex justify-center items-center hover:bg-gray-100 hover:border-gray-800 cursor-pointer mr-2'>
-                    <div className="h-1 w-4 border border-gray-900 rounded-md bg-gray-900"></div>
-                </div>
-                <div className='bg-white border border-gray-400 rounded-md w-10 h-10 flex justify-center items-center hover:bg-gray-100 hover:border-gray-800 cursor-pointer mr-2'>
-                    <div className="h-1.5 w-4 border border-gray-900 rounded-md bg-gray-900"></div>
-                </div>
+                <StrokeOptions onOptionChange={handleOptionChange} />
                 <div className="w-1 border rounded-md bg-gray-700 mr-2"></div>
                 <ColorPicker color={color} onChange={(e) => setColor(e)} />
                 <div className="w-1 border rounded-md bg-gray-700 mr-2"></div>

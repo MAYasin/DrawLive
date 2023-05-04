@@ -16,7 +16,8 @@ type Point = {x: number, y: number}
 type Drawline = {
     prevPoint: Point | null,
     currentPoint: Point,
-    color: string
+    color: string,
+    strokeWidth: number,
 }
 
 io.on('connection', (socket) => {
@@ -30,8 +31,8 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('canvas-state-from-server', state)
     })
 
-    socket.on('draw-line', ({prevPoint, currentPoint, color}: Drawline) => {
-        socket.broadcast.emit('draw-line', {prevPoint, currentPoint, color})
+    socket.on('draw-line', ({prevPoint, currentPoint, color, strokeWidth}: Drawline) => {
+        socket.broadcast.emit('draw-line', {prevPoint, currentPoint, color, strokeWidth})
     })
 
     socket.on('clear-canvas', () => io.emit('clear-canvas'))
