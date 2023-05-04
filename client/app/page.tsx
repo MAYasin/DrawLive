@@ -13,8 +13,8 @@ import StrokeOptions, { strokeOptions } from './stoke-options';
 import BrushOptions, { brushOptions } from './brush-options';
 
 
-
-const socket = io('http://localhost:5000')
+const port = 'https://draw-live-server.vercel.app/ '|| 'http://localhost:5000'
+const socket = io(port)
 
 interface PageProps {}
 
