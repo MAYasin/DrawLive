@@ -8,9 +8,9 @@ import { io } from 'socket.io-client'
 import Navbar from './navbar';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import ColorPicker from './colorpicker';
-import StrokeOptions, { strokeOptions } from './stoke-options';
-import BrushOptions, { brushOptions } from './brush-options';
+import ColorPicker from './components/colorpicker';
+import StrokeOptions, { strokeOptions } from './components/stoke-options';
+import BrushOptions, { brushOptions } from './components/brush-options';
 
 
 const port = 'https://draw-live-server.onrender.com'|| 'http://localhost:5000'
