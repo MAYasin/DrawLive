@@ -90,9 +90,9 @@ const Page: FunctionComponent<PageProps> = () => {
     }
 
     return (
-        <div className='overflow-hidden flex flex-col'>
+        <div className='flex flex-col h-screen'>
             <Navbar />
-            <div className='tool-bar py-3 pl-7 my-6 ml-6 md:mr-6 flex md:justify-center overflow-auto rounded-l-full md:rounded-r-full'>              
+            <div className='tool-bar py-3 pl-7 my-6 ml-6 items-center md:mr-6 flex md:justify-center overflow-auto rounded-l-full md:rounded-r-full'>              
                 <BrushOptions onOptionChange={handleBrushOptionChange} />
                 <div className="divider border rounded-md bg-gray-700 mr-2"></div>
                 <StrokeOptions onOptionChange={handleStrokeOptionChange} />

@@ -39,5 +39,6 @@ body {
 }
 
 .divider {
+  align-self: normal !important;
   min-width: 4px;
 }
