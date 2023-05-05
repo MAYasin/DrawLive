@@ -26,10 +26,18 @@ body {
     rgb(var(--background-start-rgb));
 } */
 
-.background-color{
+body {
   background-color: #f6f6f6;
 }
 
-.tool-bar{
+.tool-bar {
   background-color: #e0e8ed;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.divider {
+  min-width: 4px;
 }

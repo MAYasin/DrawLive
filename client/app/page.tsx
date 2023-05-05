@@ -90,30 +90,28 @@ const Page: FunctionComponent<PageProps> = () => {
     }
 
     return (
-        <div className='w-screen h-screen background-color flex flex-col'>
+        <div className='overflow-hidden flex flex-col'>
             <Navbar />
-            <div className='tool-bar p-3 m-6 flex justify-center rounded-full'>              
+            <div className='tool-bar py-3 pl-7 my-6 ml-6 md:mr-6 flex md:justify-center overflow-auto rounded-l-full md:rounded-r-full'>              
                 <BrushOptions onOptionChange={handleBrushOptionChange} />
-                <div className="w-1 border rounded-md bg-gray-700 mr-2"></div>
+                <div className="divider border rounded-md bg-gray-700 mr-2"></div>
                 <StrokeOptions onOptionChange={handleStrokeOptionChange} />
-                <div className="w-1 border rounded-md bg-gray-700 mr-2"></div>
+                <div className="divider border rounded-md bg-gray-700 mr-2"></div>
                 <ColorPicker color={color} onChange={(e) => setColor(e)} />
-                <div className="w-1 border rounded-md bg-gray-700 mr-2"></div>
-                <div className='bg-red-400 text-white border rounded-md h-10 px-3 flex justify-center items-center hover:bg-red-600 cursor-pointer mr-2' onClick={() => socket.emit('clear-canvas')}>
+                <div className="divider border rounded-md bg-gray-700 mr-2"></div>
+                <div className='bg-red-400 text-white whitespace-nowrap border rounded-md h-10 px-3 flex justify-center items-center hover:bg-red-600 cursor-pointer mr-2' onClick={() => socket.emit('clear-canvas')}>
                     <span>Clear Canvas</span>
                 </div>
-                <div onClick={saveImage} className='bg-purple-400 text-white border rounded-md h-10 px-3 flex justify-center items-center hover:bg-purple-600 cursor-pointer mr-2'>
+                <div onClick={saveImage} className='bg-purple-400 text-white whitespace-nowrap border rounded-md h-10 px-3 flex justify-center items-center hover:bg-purple-600 cursor-pointer mr-2'>
                     <span>Save Image</span>
                 </div>
             </div>
-            <div className='flex flex-grow justify-center items-center'>               
+            <div className='self-center w-full h-full px-4'>
                 <canvas
                 ref={canvasRef} 
                 onMouseDown={onMouseDown}
-                width={750}
-                height={750}
                 className='rounded-md bg-white shadow-sm'/>
-            </div>
+            </div>          
         </div>
     );
 }
