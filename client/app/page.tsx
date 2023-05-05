@@ -90,9 +90,9 @@ const Page: FunctionComponent<PageProps> = () => {
     }
 
     return (
-        <div className='flex flex-col h-screen'>
+        <div className='flex flex-col h-screen w-screen'>
             <Navbar />
-            <div className='tool-bar py-3 pl-7 my-6 ml-6 items-center md:mr-6 flex md:justify-center overflow-auto rounded-l-full md:rounded-r-full'>              
+            <div className='tool-bar py-3 pl-7 my-3 ml-6 md:mr-6 flex md:justify-center items-center overflow-y-hidden overflow-x-auto rounded-l-full md:rounded-r-full'>              
                 <BrushOptions onOptionChange={handleBrushOptionChange} />
                 <div className="divider border rounded-md bg-gray-700 mr-2"></div>
                 <StrokeOptions onOptionChange={handleStrokeOptionChange} />
@@ -106,10 +106,12 @@ const Page: FunctionComponent<PageProps> = () => {
                     <span>Save Image</span>
                 </div>
             </div>
-            <div className='self-center w-full h-full px-4'>
+            <div className='flex justify-center items-center w-full h-full'>
                 <canvas
                 ref={canvasRef} 
                 onMouseDown={onMouseDown}
+                width={750}
+                height={750}
                 className='rounded-md bg-white shadow-sm'/>
             </div>          
         </div>

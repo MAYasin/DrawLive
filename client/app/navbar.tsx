@@ -38,7 +38,7 @@ const Navbar = () => {
                 placeholder="Enter link"
               />
               <button type="submit" className="bg-gray-700 hover:bg-gray-800 text-white py-1 px-2 rounded w-20">
-                Submit
+                Connect
               </button>
             </form>
           </div>
