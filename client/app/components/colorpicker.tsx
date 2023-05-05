@@ -25,7 +25,7 @@ function ColorPicker({ onChange, color: defaultColor }: ColorPickerProps) {
     }
 
   return (
-    <div className='relative'>
+    <div>
         <div className='flex'>
             <div onClick={handleClick} style={{ backgroundColor: color }} className='border border-gray-400 rounded-full w-10 h-10 flex justify-center items-center cursor-pointer mr-2'></div>
             <div className="w-1 border rounded-md bg-gray-400 mr-2 my-2"></div>
