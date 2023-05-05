@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 
 
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -41,8 +41,8 @@ function BrushOptions({ onOptionChange }: Props) {
 
   return (
     <div className="flex">
-      {brushOptions.map((option) => (
-        <div onClick={() => handleClick(option)} className={`
+      {brushOptions.map((option, index) => (
+        <div key={index} onClick={() => handleClick(option)} className={`
             ${
                 activeOption === option
                 ? "bg-gray-100 border-gray-800"

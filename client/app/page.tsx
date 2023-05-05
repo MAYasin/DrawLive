@@ -3,11 +3,9 @@
 import { useDraw } from '@/hooks/useDraw';
 import { drawLine } from '@/utils/drawLine';
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { ChromePicker } from 'react-color';
 import { io } from 'socket.io-client'
 import Navbar from './navbar';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ColorPicker from './components/colorpicker';
 import StrokeOptions, { strokeOptions } from './components/stoke-options';
 import BrushOptions, { brushOptions } from './components/brush-options';

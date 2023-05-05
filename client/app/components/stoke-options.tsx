@@ -1,4 +1,4 @@
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 
 export const strokeOptions = [
   { thickness: "h-0", stroke: 5},
@@ -20,8 +20,8 @@ function StrokeOptions({ onOptionChange }: Props) {
 
   return (
     <div className="flex">
-      {strokeOptions.map((option) => (
-        <div onClick={() => handleClick(option.stroke)} className={`${
+      {strokeOptions.map((option, index) => (
+        <div key={index} onClick={() => handleClick(option.stroke)} className={`${
             activeOption === option.stroke
               ? "bg-gray-100 border-gray-800"
               : "bg-white border-gray-400"
