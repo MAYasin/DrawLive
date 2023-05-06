@@ -130,7 +130,7 @@ const Page: FunctionComponent<PageProps> = () => {
                     </div>
                 </div>
             </div>
-            <div className='flex justify-center items-center w-full h-full'>
+            <div className='flex justify-center items-start w-full h-full'>
                 <canvas
                 ref={canvasRef} 
                 onMouseDown={onMouseDown}
