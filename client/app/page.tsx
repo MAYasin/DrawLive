@@ -98,15 +98,8 @@ const Page: FunctionComponent<PageProps> = () => {
       
         canvas!.width = window.innerWidth * 0.85;
         canvas!.height = window.innerHeight * 0.85;
-        const scaleFactor = Math.min(
-          canvas!.width / tempCanvas.width,
-          canvas!.height / tempCanvas.height
-        );
-        const destWidth = tempCanvas.width * scaleFactor;
-        const destHeight = tempCanvas.height * scaleFactor;
-        const destX = (canvas!.width - destWidth) / 2;
-        const destY = (canvas!.height - destHeight) / 2;
-        canvas!.getContext('2d')!.drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height, destX, destY, destWidth, destHeight);
+        
+        canvas!.getContext('2d')!.drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height);
     }
 
     useEffect(() => {   
