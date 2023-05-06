@@ -88,14 +88,28 @@ const Page: FunctionComponent<PageProps> = () => {
         drawLine({prevPoint, currentPoint, ctx, color, strokeWidth, brushType})
     }
 
-    useEffect(() => {
+    function resizeCanvas() {
         const canvas = canvasRef.current;
-    
-        function resizeCanvas() {
-          canvas!.width = window.innerWidth * 0.85;
-          canvas!.height = window.innerHeight * 0.85;
-        }
-    
+        const tempCanvas = document.createElement('canvas');
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCanvas.width = canvas!.width;
+        tempCanvas.height = canvas!.height;
+        tempCtx!.drawImage(canvas!, 0, 0);
+      
+        canvas!.width = window.innerWidth * 0.85;
+        canvas!.height = window.innerHeight * 0.85;
+        const scaleFactor = Math.min(
+          canvas!.width / tempCanvas.width,
+          canvas!.height / tempCanvas.height
+        );
+        const destWidth = tempCanvas.width * scaleFactor;
+        const destHeight = tempCanvas.height * scaleFactor;
+        const destX = (canvas!.width - destWidth) / 2;
+        const destY = (canvas!.height - destHeight) / 2;
+        canvas!.getContext('2d')!.drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height, destX, destY, destWidth, destHeight);
+    }
+
+    useEffect(() => {   
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
     
