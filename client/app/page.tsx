@@ -97,7 +97,7 @@ const Page: FunctionComponent<PageProps> = () => {
         tempCtx!.drawImage(canvas!, 0, 0);
       
         canvas!.width = window.innerWidth * 0.85;
-        canvas!.height = window.innerHeight * 0.85;
+        canvas!.height = window.innerHeight * 0.75;
         
         canvas!.getContext('2d')!.drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height);
     }
