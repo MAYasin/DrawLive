@@ -42,7 +42,6 @@ const Page: FunctionComponent<PageProps> = () => {
 
     useEffect(() => {
         const ctx = canvasRef.current?.getContext('2d')
-
         socket.emit('client-ready')
 
         socket.on('get-canvas-state', () => {
@@ -89,29 +88,45 @@ const Page: FunctionComponent<PageProps> = () => {
         drawLine({prevPoint, currentPoint, ctx, color, strokeWidth, brushType})
     }
 
+    useEffect(() => {
+        const canvas = canvasRef.current;
+    
+        function resizeCanvas() {
+          canvas!.width = window.innerWidth * 0.85;
+          canvas!.height = window.innerHeight * 0.85;
+        }
+    
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+    
+        return () => {
+          window.removeEventListener('resize', resizeCanvas);
+        };
+    }, []);
+
     return (
-        <div className='flex flex-col h-screen w-screen'>
+        <div className='flex flex-col h-screen w-screen overflow-hidden'>
             <Navbar />
-            <div className='tool-bar py-3 pl-7 my-3 ml-6 md:mr-6 flex md:justify-center items-center overflow-y-hidden overflow-x-auto rounded-l-full md:rounded-r-full'>              
-                <BrushOptions onOptionChange={handleBrushOptionChange} />
-                <div className="divider border rounded-md bg-gray-700 mr-2"></div>
-                <StrokeOptions onOptionChange={handleStrokeOptionChange} />
-                <div className="divider border rounded-md bg-gray-700 mr-2"></div>
-                <ColorPicker color={color} onChange={(e) => setColor(e)} />
-                <div className="divider border rounded-md bg-gray-700 mr-2"></div>
-                <div className='bg-red-400 text-white whitespace-nowrap border rounded-md h-10 px-3 flex justify-center items-center hover:bg-red-600 cursor-pointer mr-2' onClick={() => socket.emit('clear-canvas')}>
-                    <span>Clear Canvas</span>
-                </div>
-                <div onClick={saveImage} className='bg-purple-400 text-white whitespace-nowrap border rounded-md h-10 px-3 flex justify-center items-center hover:bg-purple-600 cursor-pointer mr-2'>
-                    <span>Save Image</span>
+            <div className='tool-bar py-3 pl-7 my-3 ml-6 md:mr-6 flex md:justify-center items-center rounded-l-full md:rounded-r-full'>              
+                <div className='tool-bar-child flex overflow-scroll'>
+                    <BrushOptions onOptionChange={handleBrushOptionChange} />
+                    <div className="divider border rounded-md bg-gray-700 mr-2"></div>
+                    <StrokeOptions onOptionChange={handleStrokeOptionChange} />
+                    <div className="divider border rounded-md bg-gray-700 mr-2"></div>
+                    <ColorPicker color={color} onChange={(e) => setColor(e)} />
+                    <div className="divider border rounded-md bg-gray-700 mr-2"></div>
+                    <div className='bg-red-400 text-white whitespace-nowrap border rounded-md h-10 px-3 flex justify-center items-center hover:bg-red-600 cursor-pointer mr-2' onClick={() => socket.emit('clear-canvas')}>
+                        <span>Clear Canvas</span>
+                    </div>
+                    <div onClick={saveImage} className='bg-purple-400 text-white whitespace-nowrap border rounded-md h-10 px-3 flex justify-center items-center hover:bg-purple-600 cursor-pointer mr-2'>
+                        <span>Save Image</span>
+                    </div>
                 </div>
             </div>
             <div className='flex justify-center items-center w-full h-full'>
                 <canvas
                 ref={canvasRef} 
                 onMouseDown={onMouseDown}
-                width={750}
-                height={750}
                 className='rounded-md bg-white shadow-sm'/>
             </div>          
         </div>

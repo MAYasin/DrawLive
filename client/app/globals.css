@@ -32,10 +32,10 @@ body {
 
 .tool-bar {
   background-color: #e0e8ed;
+}
 
-  &::-webkit-scrollbar {
-    display: none;
-  }
+.tool-bar-child::-webkit-scrollbar {
+  display: none;
 }
 
 .divider {
