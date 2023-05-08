@@ -88,7 +88,7 @@ const Page: FunctionComponent<PageProps> = () => {
         drawLine({prevPoint, currentPoint, ctx, color, strokeWidth, brushType})
     }
 
-    function resizeCanvas() {
+    /* function resizeCanvas() {
         const canvas = canvasRef.current;
         const tempCanvas = document.createElement('canvas');
         const tempCtx = tempCanvas.getContext('2d');
@@ -109,7 +109,7 @@ const Page: FunctionComponent<PageProps> = () => {
         return () => {
           window.removeEventListener('resize', resizeCanvas);
         };
-    }, []);
+    }, []); */
 
     return (
         <div className='flex flex-col h-screen w-screen overflow-hidden'>
@@ -130,10 +130,12 @@ const Page: FunctionComponent<PageProps> = () => {
                     </div>
                 </div>
             </div>
-            <div className='flex justify-center items-start w-full h-full'>
+            <div className='flex justify-center items-center w-full h-full overflow-auto'>
                 <canvas
                 ref={canvasRef} 
                 onMouseDown={onMouseDown}
+                width={750}
+                height={750}
                 className='rounded-md bg-white shadow-sm'/>
             </div>          
         </div>
