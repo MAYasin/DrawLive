@@ -38,7 +38,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('canvas-state', (state) => {
-        console.log('received canvas state')
+        //console.log('received canvas state')
         socket.broadcast.emit('canvas-state-from-server', state)
     })
 
