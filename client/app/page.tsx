@@ -4,142 +4,140 @@ import { useDraw } from '@/hooks/useDraw';
 import { drawLine } from '@/utils/drawLine';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { io } from 'socket.io-client'
-import Navbar from './navbar';
 
 import ColorPicker from './components/colorpicker';
 import StrokeOptions, { strokeOptions } from './components/stoke-options';
 import BrushOptions, { brushOptions } from './components/brush-options';
+import Navbar from './navbar';
 
 
 const port = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000'
 const socket = io(port)
 
-interface PageProps {}
+interface PageProps { }
 
 type DrawLineProps = {
-    prevPoint: Point | null
-    currentPoint: Point
-    color: string,
-    strokeWidth: number,
-    brushType: string
+  prevPoint: Point | null
+  currentPoint: Point
+  color: string,
+  strokeWidth: number,
+  brushType: string
 }
- 
-const Page: FunctionComponent<PageProps> = () => {
 
-    const [color, setColor] = useState<string>('#000')
-    const [strokeWidth, setActiveStrokeOption] = useState(strokeOptions[0].stroke);
-    const [brushType, setActiveBrushOption] = useState(brushOptions[0]);
+export default function Home() {
 
-    const handleStrokeOptionChange = (option: number) => {
-        setActiveStrokeOption(option);
-    };
+  const [color, setColor] = useState<string>('#000')
+  const [strokeWidth, setActiveStrokeOption] = useState(strokeOptions[0].stroke);
+  const [brushType, setActiveBrushOption] = useState(brushOptions[0]);
 
-    const handleBrushOptionChange = (option: string) => {
-        setActiveBrushOption(option);
-    };
+  const handleStrokeOptionChange = (option: number) => {
+    setActiveStrokeOption(option);
+  };
 
-    const { canvasRef, onMouseDown, clearCanvas } = useDraw(createLine)
+  const handleBrushOptionChange = (option: string) => {
+    setActiveBrushOption(option);
+  };
 
-    useEffect(() => {
-        const ctx = canvasRef.current?.getContext('2d')
-        socket.emit('client-ready')
+  const { canvasRef, onMouseDown, clearCanvas } = useDraw(createLine)
 
-        socket.on('get-canvas-state', () => {
-            if(!canvasRef.current?.toDataURL) return
+  useEffect(() => {
+    const ctx = canvasRef.current?.getContext('2d')
+    socket.emit('client-ready')
 
-            socket.emit('canvas-state', canvasRef.current.toDataURL())
-        })
+    socket.on('get-canvas-state', () => {
+      if (!canvasRef.current?.toDataURL) return
 
-        socket.on('canvas-state-from-server', (state: string) => {
-            const img = new Image()
-            img.src = state
+      socket.emit('canvas-state', canvasRef.current.toDataURL())
+    })
 
-            img.onload = () => {
-                ctx?.drawImage(img, 0, 0)
-            }
-        })
+    socket.on('canvas-state-from-server', (state: string) => {
+      const img = new Image()
+      img.src = state
 
-        socket.on('draw-line', ({prevPoint, currentPoint, color, strokeWidth, brushType}: DrawLineProps) => {
-            if(!ctx) return
+      img.onload = () => {
+        ctx?.drawImage(img, 0, 0)
+      }
+    })
 
-            drawLine({prevPoint, currentPoint, ctx, color, strokeWidth, brushType})
-        })
+    socket.on('draw-line', ({ prevPoint, currentPoint, color, strokeWidth, brushType }: DrawLineProps) => {
+      if (!ctx) return
 
-        socket.on('clear-canvas', clearCanvas)
+      drawLine({ prevPoint, currentPoint, ctx, color, strokeWidth, brushType })
+    })
 
-        return () => {
-            socket.off('get-canvas-state')
-            socket.off('canvas-state-from-server')
-            socket.off('draw-line')
-            socket.off('clear-canvas')
-        }
+    socket.on('clear-canvas', clearCanvas)
 
-    }, [canvasRef, clearCanvas])
-
-    function saveImage() {
-        const link = document.createElement('a')
-        link.href = canvasRef.current?.toDataURL() || ''
-        link.download = 'canvas.png'
-        link.click()
+    return () => {
+      socket.off('get-canvas-state')
+      socket.off('canvas-state-from-server')
+      socket.off('draw-line')
+      socket.off('clear-canvas')
     }
 
-    function createLine({prevPoint, currentPoint, ctx}: Draw) {
-        socket.emit('draw-line', ({prevPoint, currentPoint, color, strokeWidth, brushType}))
-        drawLine({prevPoint, currentPoint, ctx, color, strokeWidth, brushType})
-    }
+  }, [canvasRef, clearCanvas])
 
-    /* function resizeCanvas() {
-        const canvas = canvasRef.current;
-        const tempCanvas = document.createElement('canvas');
-        const tempCtx = tempCanvas.getContext('2d');
-        tempCanvas.width = canvas!.width;
-        tempCanvas.height = canvas!.height;
-        tempCtx!.drawImage(canvas!, 0, 0);
-      
-        canvas!.width = window.innerWidth * 0.85;
-        canvas!.height = window.innerHeight * 0.75;
-        
-        canvas!.getContext('2d')!.drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height);
-    }
+  function saveImage() {
+    const link = document.createElement('a')
+    link.href = canvasRef.current?.toDataURL() || ''
+    link.download = 'canvas.png'
+    link.click()
+  }
 
-    useEffect(() => {   
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
+  function createLine({ prevPoint, currentPoint, ctx }: Draw) {
+    socket.emit('draw-line', ({ prevPoint, currentPoint, color, strokeWidth, brushType }))
+    drawLine({ prevPoint, currentPoint, ctx, color, strokeWidth, brushType })
+  }
+
+  /* function resizeCanvas() {
+      const canvas = canvasRef.current;
+      const tempCanvas = document.createElement('canvas');
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCanvas.width = canvas!.width;
+      tempCanvas.height = canvas!.height;
+      tempCtx!.drawImage(canvas!, 0, 0);
     
-        return () => {
-          window.removeEventListener('resize', resizeCanvas);
-        };
-    }, []); */
+      canvas!.width = window.innerWidth * 0.85;
+      canvas!.height = window.innerHeight * 0.75;
+      
+      canvas!.getContext('2d')!.drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height);
+  }
 
-    return (
-        <div className='flex flex-col h-screen w-screen overflow-hidden'>
-            <Navbar />
-            <div className='tool-bar py-3 pl-7 my-3 ml-6 md:mr-6 flex md:justify-center items-center rounded-l-full md:rounded-r-full'>              
-                <div className='tool-bar-child flex overflow-scroll'>
-                    <BrushOptions onOptionChange={handleBrushOptionChange} />
-                    <div className="divider border rounded-md bg-gray-700 mr-2"></div>
-                    <StrokeOptions onOptionChange={handleStrokeOptionChange} />
-                    <div className="divider border rounded-md bg-gray-700 mr-2"></div>
-                    <ColorPicker color={color} onChange={(e) => setColor(e)} />
-                    <div className="divider border rounded-md bg-gray-700 mr-2"></div>
-                    <div className='bg-red-400 text-white whitespace-nowrap border rounded-md h-10 px-3 flex justify-center items-center hover:bg-red-600 cursor-pointer mr-2' onClick={() => socket.emit('clear-canvas')}>
-                        <span>Clear Canvas</span>
-                    </div>
-                    <div onClick={saveImage} className='bg-purple-400 text-white whitespace-nowrap border rounded-md h-10 px-3 flex justify-center items-center hover:bg-purple-600 cursor-pointer mr-2'>
-                        <span>Save Image</span>
-                    </div>
-                </div>
-            </div>
-            <div className='flex justify-center items-center w-full h-full overflow-auto'>
-                <canvas
-                ref={canvasRef} 
-                onMouseDown={onMouseDown}
-                width={750}
-                height={750}
-                className='rounded-md bg-white shadow-sm'/>
-            </div>          
+  useEffect(() => {   
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+  
+      return () => {
+        window.removeEventListener('resize', resizeCanvas);
+      };
+  }, []); */
+
+  return (
+    <div className='flex flex-col h-screen w-screen overflow-hidden'>
+      <Navbar />
+      <div className='tool-bar py-3 pl-7 my-3 ml-6 md:mr-6 flex md:justify-center items-center rounded-l-full md:rounded-r-full'>
+        <div className='tool-bar-child flex overflow-scroll'>
+          <BrushOptions onOptionChange={handleBrushOptionChange} />
+          <div className="divider border rounded-md bg-gray-700 mr-2"></div>
+          <StrokeOptions onOptionChange={handleStrokeOptionChange} />
+          <div className="divider border rounded-md bg-gray-700 mr-2"></div>
+          <ColorPicker color={color} onChange={(e) => setColor(e)} />
+          <div className="divider border rounded-md bg-gray-700 mr-2"></div>
+          <div className='bg-red-400 text-white whitespace-nowrap border rounded-md h-10 px-3 flex justify-center items-center hover:bg-red-600 cursor-pointer mr-2' onClick={() => socket.emit('clear-canvas')}>
+            <span>Clear Canvas</span>
+          </div>
+          <div onClick={saveImage} className='bg-purple-400 text-white whitespace-nowrap border rounded-md h-10 px-3 flex justify-center items-center hover:bg-purple-600 cursor-pointer mr-2'>
+            <span>Save Image</span>
+          </div>
         </div>
-    );
+      </div>
+      <div className='flex justify-center items-center w-full h-full overflow-auto'>
+        <canvas
+          ref={canvasRef}
+          onMouseDown={onMouseDown}
+          width={750}
+          height={750}
+          className='rounded-md bg-white shadow-sm' />
+      </div>
+    </div>
+  );
 }
- 
-export default Page;
