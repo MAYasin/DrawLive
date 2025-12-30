@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 
 import { strokeOptions } from './components/stoke-options';
-import { brushOptions } from './components/brush-options';
 import Navbar from './components/navbar';
 
 const port = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000'
@@ -15,7 +14,7 @@ const socket = io(port)
 export default function Home() {
   const [color, setColor] = useState<string>('#000')
   const [strokeWidth, setActiveStrokeOption] = useState(strokeOptions[0].value);
-  const [brushType, setActiveBrushOption] = useState(brushOptions[0]);
+  const [brushType, setActiveBrushOption] = useState("pencil");
 
   const { canvasRef, onMouseDown, clearCanvas } = useDraw(createLine)
 
@@ -63,7 +62,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
-      <Navbar 
+      <Navbar
         color={color}
         setColor={setColor}
         onStrokeChange={setActiveStrokeOption}
@@ -71,14 +70,14 @@ export default function Home() {
         onClear={() => socket.emit('clear-canvas')}
         onSave={saveImage}
       />
-      
+
       <main className='flex-1 flex justify-center items-center p-4 overflow-auto'>
         <canvas
           ref={canvasRef}
           onMouseDown={onMouseDown}
           width={750}
           height={750}
-          className='rounded-md bg-white shadow-xl border border-gray-200' 
+          className='rounded-md bg-white shadow-xl border border-gray-200'
         />
       </main>
     </div>
@@ -86,25 +85,25 @@ export default function Home() {
 }
 
 
-  /* function resizeCanvas() {
-      const canvas = canvasRef.current;
-      const tempCanvas = document.createElement('canvas');
-      const tempCtx = tempCanvas.getContext('2d');
-      tempCanvas.width = canvas!.width;
-      tempCanvas.height = canvas!.height;
-      tempCtx!.drawImage(canvas!, 0, 0);
-    
-      canvas!.width = window.innerWidth * 0.85;
-      canvas!.height = window.innerHeight * 0.75;
-      
-      canvas!.getContext('2d')!.drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height);
-  }
-
-  useEffect(() => {   
-      resizeCanvas();
-      window.addEventListener('resize', resizeCanvas);
+/* function resizeCanvas() {
+    const canvas = canvasRef.current;
+    const tempCanvas = document.createElement('canvas');
+    const tempCtx = tempCanvas.getContext('2d');
+    tempCanvas.width = canvas!.width;
+    tempCanvas.height = canvas!.height;
+    tempCtx!.drawImage(canvas!, 0, 0);
   
-      return () => {
-        window.removeEventListener('resize', resizeCanvas);
-      };
-  }, []); */
+    canvas!.width = window.innerWidth * 0.85;
+    canvas!.height = window.innerHeight * 0.75;
+    
+    canvas!.getContext('2d')!.drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height);
+}
+
+useEffect(() => {   
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+ 
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+    };
+}, []); */

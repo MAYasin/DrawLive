@@ -1,14 +1,20 @@
-import { SetStateAction, useState } from 'react';
-import { ChromePicker } from 'react-color';
+'use client';
+
+import { useState, useEffect } from 'react';
+import { ChromePicker, ColorResult } from 'react-color';
 
 type ColorPickerProps = {
-    onChange: (color: SetStateAction<string>) => void;
+    onChange: (color: string) => void;
     color: string;
 };
 
-export default function ColorPicker({ onChange, color: defaultColor }: ColorPickerProps) {
+export default function ColorPicker({ onChange, color: externalColor }: ColorPickerProps) {
     const [displayColorPicker, setDisplayColorPicker] = useState(false);
-    const [color, setColor] = useState(defaultColor);
+    const [localColor, setLocalColor] = useState(externalColor);
+
+    useEffect(() => {
+        setLocalColor(externalColor);
+    }, [externalColor]);
 
     const handleClick = () => {
         setDisplayColorPicker(!displayColorPicker);
@@ -18,25 +24,48 @@ export default function ColorPicker({ onChange, color: defaultColor }: ColorPick
         setDisplayColorPicker(false);
     };
 
-    function handleChange(newColor: { hex: SetStateAction<string> }) {
-        const newColorHex = newColor.hex;
-        setColor(newColorHex);
-        onChange(newColorHex);
-    }
+    const handleChange = (colorResult: ColorResult) => {
+        const newHex = colorResult.hex;
+        setLocalColor(newHex);
+        onChange(newHex);
+    };
+
+    const handleQuickSelect = (hex: string) => {
+        setLocalColor(hex);
+        onChange(hex);
+    };
 
     return (
-        <div>
-            <div className='flex'>
-                <div onClick={handleClick} style={{ backgroundColor: color }} className='border border-gray-400 rounded-full w-10 h-10 flex justify-center items-center cursor-pointer mr-2'></div>
-                <div className="w-1 border rounded-md bg-gray-400 mr-2 my-2"></div>
-                <div onClick={() => handleChange({ hex: '#EF4444' })} className='bg-red-500 border border-gray-400 rounded-full w-10 h-10 flex justify-center items-center hover:border-gray-800 cursor-pointer mr-2'></div>
-                <div onClick={() => handleChange({ hex: '#22C55E' })} className='bg-green-500 border border-gray-400 rounded-full w-10 h-10 flex justify-center items-center hover:border-gray-800 cursor-pointer mr-2'></div>
-                <div onClick={() => handleChange({ hex: '#3b82f6' })} className='bg-blue-500 border border-gray-400 rounded-full w-10 h-10 flex justify-center items-center hover:border-gray-800 cursor-pointer mr-2'></div>
+        <div className="relative">
+            <div className='flex items-center'>
+                <div
+                    onClick={handleClick}
+                    style={{ backgroundColor: localColor }}
+                    className='border border-gray-400 rounded-full w-10 h-10 flex justify-center items-center cursor-pointer mr-2 shadow-sm hover:scale-105 transition-transform'
+                />
+
+                <div className="w-px h-8 bg-gray-300 mr-2"></div>
+
+                <div
+                    onClick={() => handleQuickSelect('#EF4444')}
+                    className='bg-red-500 border border-gray-400 rounded-full w-8 h-8 hover:border-gray-800 cursor-pointer mr-2 transition-all'
+                />
+                <div
+                    onClick={() => handleQuickSelect('#22C55E')}
+                    className='bg-green-500 border border-gray-400 rounded-full w-8 h-8 hover:border-gray-800 cursor-pointer mr-2 transition-all'
+                />
+                <div
+                    onClick={() => handleQuickSelect('#3b82f6')}
+                    className='bg-blue-500 border border-gray-400 rounded-full w-8 h-8 hover:border-gray-800 cursor-pointer mr-2 transition-all'
+                />
             </div>
+
             {displayColorPicker && (
-                <div className='absolute z-10'>
+                <div className='absolute z-50 mt-2 left-0'>
                     <div className='fixed inset-0' onClick={handleClose} />
-                    <ChromePicker className='mt-1' color={color} onChange={handleChange} />
+                    <div className="relative shadow-xl">
+                        <ChromePicker color={localColor} onChange={handleChange} />
+                    </div>
                 </div>
             )}
         </div>

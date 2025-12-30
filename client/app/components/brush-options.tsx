@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Pencil, Highlighter, Paintbrush, LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export const brushOptions = [
+const brushOptions = [
   "pencil",
   "marker",
   "brush",
 ] as const;
+
+export type BrushType = (typeof brushOptions)[number];
 
 const iconMap: Record<string, LucideIcon> = {
   pencil: Pencil,
@@ -15,13 +17,12 @@ const iconMap: Record<string, LucideIcon> = {
 };
 
 interface BrushProps {
-  onOptionChange: (brush: string) => void;
+  onOptionChange: (brush: BrushType) => void;
 }
 
 export default function BrushOptions({ onOptionChange }: BrushProps) {
-  const [activeOption, setActiveOption] = useState<string>(brushOptions[0]);
-
-  const handleClick = (brush: string) => {
+  const [activeOption, setActiveOption] = useState<BrushType>(brushOptions[0]);
+  const handleClick = (brush: BrushType) => {
     setActiveOption(brush);
     onOptionChange(brush);
   };
