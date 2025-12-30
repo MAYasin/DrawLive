@@ -1,8 +1,14 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { ChromePicker, ColorResult } from 'react-color';
+import { Button } from '@/components/ui/button';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 type ColorPickerProps = {
     onChange: (color: string) => void;
@@ -10,20 +16,11 @@ type ColorPickerProps = {
 };
 
 export default function ColorPicker({ onChange, color: externalColor }: ColorPickerProps) {
-    const [displayColorPicker, setDisplayColorPicker] = useState(false);
     const [localColor, setLocalColor] = useState(externalColor);
 
     useEffect(() => {
         setLocalColor(externalColor);
     }, [externalColor]);
-
-    const handleClick = () => {
-        setDisplayColorPicker(!displayColorPicker);
-    };
-
-    const handleClose = () => {
-        setDisplayColorPicker(false);
-    };
 
     const handleChange = (colorResult: ColorResult) => {
         const newHex = colorResult.hex;
@@ -37,42 +34,48 @@ export default function ColorPicker({ onChange, color: externalColor }: ColorPic
     };
 
     return (
-        <div className="relative">
-            <div className='flex items-center gap-2'>
-                <Button
-                    size="icon-lg"
-                    onClick={handleClick}
-                    style={{ backgroundColor: localColor }}
-                    className='rounded-full ring ring-offset-1 cursor-pointer'
-                />
+        <div className="flex items-center gap-2">
+            <Popover>
+                <PopoverTrigger asChild>
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        style={{ backgroundColor: localColor }}
+                        className="rounded-full ring ring-offset-1 ring-transparent hover:ring-gray-300 transition-all cursor-pointer"
+                    />
+                </PopoverTrigger>
+                <PopoverContent
+                    side="bottom"
+                    align="start"
+                    className="w-auto p-0 border-none shadow-2xl z-100"
+                >
+                    <ChromePicker
+                        color={localColor}
+                        onChange={handleChange}
+                        disableAlpha={true}
+                    />
+                </PopoverContent>
+            </Popover>
 
-                <div className="h-8 border-l border-gray-300 mx-1" />
+            <div className="h-6 border-l border-gray-300 mx-1" />
 
-                <Button
-                    size="icon"
-                    onClick={() => handleQuickSelect('#EF4444')}
-                    className='bg-red-500 hover:bg-red-500 rounded-full ring ring-offset-1 cursor-pointer'
-                />
-                <Button
-                    size="icon"
-                    onClick={() => handleQuickSelect('#22C55E')}
-                    className='bg-green-500 hover:bg-green-500 rounded-full ring ring-offset-1 cursor-pointer'
-                />
-                <Button
-                    size="icon"
-                    onClick={() => handleQuickSelect('#3b82f6')}
-                    className='bg-blue-500 hover:bg-blue-500 rounded-full ring ring-offset-1 cursor-pointer'
-                />
+            <div className="flex gap-1.5">
+                {[
+                    { hex: '#EF4444', label: 'Red' },
+                    { hex: '#22C55E', label: 'Green' },
+                    { hex: '#3b82f6', label: 'Blue' }
+                ].map((preset) => (
+                    <Button
+                        key={preset.hex}
+                        size="icon-sm"
+                        onClick={() => handleQuickSelect(preset.hex)}
+                        style={{ backgroundColor: preset.hex }}
+                        className={cn(
+                            "rounded-full ring-1 ring-offset-1 cursor-pointer",
+                        )}
+                    />
+                ))}
             </div>
-
-            {displayColorPicker && (
-                <div className='absolute z-50 mt-2 left-0'>
-                    <div className='fixed inset-0' onClick={handleClose} />
-                    <div className="relative shadow-xl">
-                        <ChromePicker color={localColor} onChange={handleChange} />
-                    </div>
-                </div>
-            )}
         </div>
     );
 }
