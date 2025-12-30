@@ -2,9 +2,8 @@
 
 import { useDraw } from '@/app/hooks/useDraw';
 import { drawLine } from '@/lib/drawLine';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { io } from 'socket.io-client';
-
 import { strokeOptions } from './components/stoke-options';
 import Navbar from './components/navbar';
 
@@ -16,15 +15,33 @@ export default function Home() {
   const [strokeWidth, setActiveStrokeOption] = useState(strokeOptions[0].value);
   const [brushType, setActiveBrushOption] = useState("pencil");
 
+  const containerRef = useRef<HTMLDivElement>(null);
   const { canvasRef, onMouseDown, clearCanvas } = useDraw(createLine)
 
   useEffect(() => {
-    const ctx = canvasRef.current?.getContext('2d')
-    socket.emit('client-ready')
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
 
+    const resizeCanvas = () => {
+      if (!canvas || !containerRef.current) return;
+
+      const tempImage = canvas.toDataURL();
+
+      canvas.width = containerRef.current.clientWidth;
+      canvas.height = containerRef.current.clientHeight;
+
+      const img = new Image();
+      img.src = tempImage;
+      img.onload = () => ctx?.drawImage(img, 0, 0);
+    };
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    socket.emit('client-ready')
     socket.on('get-canvas-state', () => {
-      if (!canvasRef.current?.toDataURL) return
-      socket.emit('canvas-state', canvasRef.current.toDataURL())
+      if (!canvas?.toDataURL) return
+      socket.emit('canvas-state', canvas.toDataURL())
     })
 
     socket.on('canvas-state-from-server', (state: string) => {
@@ -41,10 +58,11 @@ export default function Home() {
     socket.on('clear-canvas', clearCanvas)
 
     return () => {
-      socket.off('get-canvas-state')
-      socket.off('canvas-state-from-server')
-      socket.off('draw-line')
-      socket.off('clear-canvas')
+      window.removeEventListener('resize', resizeCanvas);
+      socket.off('get-canvas-state');
+      socket.off('canvas-state-from-server');
+      socket.off('draw-line');
+      socket.off('clear-canvas');
     }
   }, [canvasRef, clearCanvas])
 
@@ -61,7 +79,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
+    <div className="h-screen flex flex-col transition-colors">
       <Navbar
         color={color}
         setColor={setColor}
@@ -71,39 +89,13 @@ export default function Home() {
         onSave={saveImage}
       />
 
-      <main className='flex-1 flex justify-center items-center p-4 overflow-auto'>
+      <main ref={containerRef} className='flex-1 relative w-full overflow-hidden p-2 md:p-4'>
         <canvas
           ref={canvasRef}
           onMouseDown={onMouseDown}
-          width={750}
-          height={750}
-          className='rounded-md bg-white shadow-xl border border-gray-200'
+          className='block w-full h-full rounded-md bg-white shadow-xl border border-gray-200 touch-none'
         />
       </main>
     </div>
   );
 }
-
-
-/* function resizeCanvas() {
-    const canvas = canvasRef.current;
-    const tempCanvas = document.createElement('canvas');
-    const tempCtx = tempCanvas.getContext('2d');
-    tempCanvas.width = canvas!.width;
-    tempCanvas.height = canvas!.height;
-    tempCtx!.drawImage(canvas!, 0, 0);
-  
-    canvas!.width = window.innerWidth * 0.85;
-    canvas!.height = window.innerHeight * 0.75;
-    
-    canvas!.getContext('2d')!.drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height);
-}
-
-useEffect(() => {   
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
- 
-    return () => {
-      window.removeEventListener('resize', resizeCanvas);
-    };
-}, []); */
