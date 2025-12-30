@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { ChromePicker, ColorResult } from 'react-color';
 
@@ -37,26 +38,30 @@ export default function ColorPicker({ onChange, color: externalColor }: ColorPic
 
     return (
         <div className="relative">
-            <div className='flex items-center'>
-                <div
+            <div className='flex items-center gap-2'>
+                <Button
+                    size="icon-lg"
                     onClick={handleClick}
                     style={{ backgroundColor: localColor }}
-                    className='border border-gray-400 rounded-full w-10 h-10 flex justify-center items-center cursor-pointer mr-2 shadow-sm hover:scale-105 transition-transform'
+                    className='rounded-full ring ring-offset-1 cursor-pointer'
                 />
 
-                <div className="w-px h-8 bg-gray-300 mr-2"></div>
+                <div className="h-8 border-l border-gray-300 mx-1" />
 
-                <div
+                <Button
+                    size="icon"
                     onClick={() => handleQuickSelect('#EF4444')}
-                    className='bg-red-500 border border-gray-400 rounded-full w-8 h-8 hover:border-gray-800 cursor-pointer mr-2 transition-all'
+                    className='bg-red-500 hover:bg-red-500 rounded-full ring ring-offset-1 cursor-pointer'
                 />
-                <div
+                <Button
+                    size="icon"
                     onClick={() => handleQuickSelect('#22C55E')}
-                    className='bg-green-500 border border-gray-400 rounded-full w-8 h-8 hover:border-gray-800 cursor-pointer mr-2 transition-all'
+                    className='bg-green-500 hover:bg-green-500 rounded-full ring ring-offset-1 cursor-pointer'
                 />
-                <div
+                <Button
+                    size="icon"
                     onClick={() => handleQuickSelect('#3b82f6')}
-                    className='bg-blue-500 border border-gray-400 rounded-full w-8 h-8 hover:border-gray-800 cursor-pointer mr-2 transition-all'
+                    className='bg-blue-500 hover:bg-blue-500 rounded-full ring ring-offset-1 cursor-pointer'
                 />
             </div>
 
