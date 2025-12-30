@@ -2,39 +2,20 @@
 
 import { useDraw } from '@/app/hooks/useDraw';
 import { drawLine } from '@/lib/drawLine';
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import { io } from 'socket.io-client'
+import { useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
 
-import ColorPicker from './components/colorpicker';
-import StrokeOptions, { strokeOptions } from './components/stoke-options';
-import BrushOptions, { brushOptions } from './components/brush-options';
+import { strokeOptions } from './components/stoke-options';
+import { brushOptions } from './components/brush-options';
 import Navbar from './components/navbar';
-
 
 const port = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000'
 const socket = io(port)
 
-type DrawLineProps = {
-  prevPoint: Point | null
-  currentPoint: Point
-  color: string,
-  strokeWidth: number,
-  brushType: string
-}
-
 export default function Home() {
-
   const [color, setColor] = useState<string>('#000')
   const [strokeWidth, setActiveStrokeOption] = useState(strokeOptions[0].value);
   const [brushType, setActiveBrushOption] = useState(brushOptions[0]);
-
-  const handleStrokeOptionChange = (option: number) => {
-    setActiveStrokeOption(option);
-  };
-
-  const handleBrushOptionChange = (option: string) => {
-    setActiveBrushOption(option);
-  };
 
   const { canvasRef, onMouseDown, clearCanvas } = useDraw(createLine)
 
@@ -44,22 +25,17 @@ export default function Home() {
 
     socket.on('get-canvas-state', () => {
       if (!canvasRef.current?.toDataURL) return
-
       socket.emit('canvas-state', canvasRef.current.toDataURL())
     })
 
     socket.on('canvas-state-from-server', (state: string) => {
       const img = new Image()
       img.src = state
-
-      img.onload = () => {
-        ctx?.drawImage(img, 0, 0)
-      }
+      img.onload = () => ctx?.drawImage(img, 0, 0)
     })
 
-    socket.on('draw-line', ({ prevPoint, currentPoint, color, strokeWidth, brushType }: DrawLineProps) => {
+    socket.on('draw-line', ({ prevPoint, currentPoint, color, strokeWidth, brushType }: any) => {
       if (!ctx) return
-
       drawLine({ prevPoint, currentPoint, ctx, color, strokeWidth, brushType })
     })
 
@@ -71,7 +47,6 @@ export default function Home() {
       socket.off('draw-line')
       socket.off('clear-canvas')
     }
-
   }, [canvasRef, clearCanvas])
 
   function saveImage() {
@@ -81,10 +56,35 @@ export default function Home() {
     link.click()
   }
 
-  function createLine({ prevPoint, currentPoint, ctx }: Draw) {
+  function createLine({ prevPoint, currentPoint, ctx }: any) {
     socket.emit('draw-line', ({ prevPoint, currentPoint, color, strokeWidth, brushType }))
     drawLine({ prevPoint, currentPoint, ctx, color, strokeWidth, brushType })
   }
+
+  return (
+    <div className="min-h-screen flex flex-col bg-slate-50">
+      <Navbar 
+        color={color}
+        setColor={setColor}
+        onStrokeChange={setActiveStrokeOption}
+        onBrushChange={setActiveBrushOption}
+        onClear={() => socket.emit('clear-canvas')}
+        onSave={saveImage}
+      />
+      
+      <main className='flex-1 flex justify-center items-center p-4 overflow-auto'>
+        <canvas
+          ref={canvasRef}
+          onMouseDown={onMouseDown}
+          width={750}
+          height={750}
+          className='rounded-md bg-white shadow-xl border border-gray-200' 
+        />
+      </main>
+    </div>
+  );
+}
+
 
   /* function resizeCanvas() {
       const canvas = canvasRef.current;
@@ -108,34 +108,3 @@ export default function Home() {
         window.removeEventListener('resize', resizeCanvas);
       };
   }, []); */
-
-  return (
-    <div className="[--header-height:calc(--spacing(14))]">
-      <Navbar />
-      <div className='tool-bar py-3 pl-7 my-3 ml-6 md:mr-6 flex md:justify-center items-center rounded-l-full md:rounded-r-full'>
-        <div className='tool-bar-child flex overflow-scroll'>
-          <BrushOptions onOptionChange={handleBrushOptionChange} />
-          <div className="divider border rounded-md bg-gray-700 mr-2"></div>
-          <StrokeOptions onOptionChange={handleStrokeOptionChange} />
-          <div className="divider border rounded-md bg-gray-700 mr-2"></div>
-          <ColorPicker color={color} onChange={(e) => setColor(e)} />
-          <div className="divider border rounded-md bg-gray-700 mr-2"></div>
-          <div className='bg-red-400 text-white whitespace-nowrap border rounded-md h-10 px-3 flex justify-center items-center hover:bg-red-600 cursor-pointer mr-2' onClick={() => socket.emit('clear-canvas')}>
-            <span>Clear Canvas</span>
-          </div>
-          <div onClick={saveImage} className='bg-purple-400 text-white whitespace-nowrap border rounded-md h-10 px-3 flex justify-center items-center hover:bg-purple-600 cursor-pointer mr-2'>
-            <span>Save Image</span>
-          </div>
-        </div>
-      </div>
-      <div className='flex justify-center items-center w-full h-full overflow-auto'>
-        <canvas
-          ref={canvasRef}
-          onMouseDown={onMouseDown}
-          width={750}
-          height={750}
-          className='rounded-md bg-white shadow-sm' />
-      </div>
-    </div>
-  );
-}
