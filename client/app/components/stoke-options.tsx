@@ -1,17 +1,18 @@
+import { Button } from "@/components/ui/button";
+import { Minus } from "lucide-react";
 import { useState } from "react";
 
 export const strokeOptions = [
-  { thickness: "h-0", stroke: 5},
-  { thickness: "h-1", stroke: 10},
-  { thickness: "h-1.5", stroke: 15},
+  { label: "Thin", strokeWidth: 1.5, value: 5 },
+  { label: "Medium", strokeWidth: 4, value: 10 },
+  { label: "Thick", strokeWidth: 7, value: 15 },
 ];
-
-interface Props {
-    onOptionChange: (stroke: number) => void;
+interface StrokeProps {
+  onOptionChange: (stroke: number) => void;
 }
 
-function StrokeOptions({ onOptionChange }: Props) {
-  const [activeOption, setActiveOption] = useState(strokeOptions[0].stroke);
+export default function StrokeOptions({ onOptionChange }: StrokeProps) {
+  const [activeOption, setActiveOption] = useState(strokeOptions[0].value);
 
   const handleClick = (stroke: number) => {
     setActiveOption(stroke);
@@ -19,18 +20,20 @@ function StrokeOptions({ onOptionChange }: Props) {
   };
 
   return (
-    <div className="flex">
-      {strokeOptions.map((option, index) => (
-        <div key={index} onClick={() => handleClick(option.stroke)} className={`${
-            activeOption === option.stroke
-              ? "bg-gray-100 border-gray-800"
-              : "bg-white border-gray-400"
-            } border rounded-md w-10 h-10 flex justify-center items-center hover:bg-gray-100 hover:border-gray-800 cursor-pointer mr-2`}>
-            <div className={`${option.thickness} w-4 border border-gray-900 rounded-md bg-gray-900`}></div>
-        </div>
-      ))}
+    <div className="flex space-x-2">
+      {strokeOptions.map((option) => {
+        const isActive = activeOption === option.value;
+
+        return (
+          <Button
+            size="icon"
+            key={option.value}
+            className="cursor-pointer"
+            onClick={() => handleClick(option.value)}
+            variant={isActive ? "default" : "outline"}>
+            <Minus strokeWidth={option.strokeWidth} />
+          </Button>);
+      })}
     </div>
   );
 }
-
-export default StrokeOptions;

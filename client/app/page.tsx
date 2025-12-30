@@ -1,20 +1,18 @@
 'use client'
 
-import { useDraw } from '@/hooks/useDraw';
-import { drawLine } from '@/utils/drawLine';
+import { useDraw } from '@/app/hooks/useDraw';
+import { drawLine } from '@/lib/drawLine';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { io } from 'socket.io-client'
 
 import ColorPicker from './components/colorpicker';
 import StrokeOptions, { strokeOptions } from './components/stoke-options';
 import BrushOptions, { brushOptions } from './components/brush-options';
-import Navbar from './navbar';
+import Navbar from './components/navbar';
 
 
 const port = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000'
 const socket = io(port)
-
-interface PageProps { }
 
 type DrawLineProps = {
   prevPoint: Point | null
@@ -27,7 +25,7 @@ type DrawLineProps = {
 export default function Home() {
 
   const [color, setColor] = useState<string>('#000')
-  const [strokeWidth, setActiveStrokeOption] = useState(strokeOptions[0].stroke);
+  const [strokeWidth, setActiveStrokeOption] = useState(strokeOptions[0].value);
   const [brushType, setActiveBrushOption] = useState(brushOptions[0]);
 
   const handleStrokeOptionChange = (option: number) => {
@@ -112,7 +110,7 @@ export default function Home() {
   }, []); */
 
   return (
-    <div className='flex flex-col h-screen w-screen overflow-hidden'>
+    <div className="[--header-height:calc(--spacing(14))]">
       <Navbar />
       <div className='tool-bar py-3 pl-7 my-3 ml-6 md:mr-6 flex md:justify-center items-center rounded-l-full md:rounded-r-full'>
         <div className='tool-bar-child flex overflow-scroll'>
