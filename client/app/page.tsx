@@ -11,7 +11,7 @@ import StrokeOptions, { strokeOptions } from './components/stoke-options';
 import BrushOptions, { brushOptions } from './components/brush-options';
 
 
-const port = 'https://draw-live-server.onrender.com'|| 'http://localhost:5000'
+const port = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000'
 const socket = io(port)
 
 interface PageProps {}
